@@ -1,3 +1,13 @@
+CREATE TABLE businesses (
+  id serial PRIMARY KEY,
+  business_name varchar(255) NOT NULL
+);
+
+CREATE TABLE roles (
+  id serial PRIMARY KEY,
+  role_name varchar(255)
+);
+
 CREATE TABLE users (
   id serial PRIMARY KEY,
   business_id integer NOT NULL REFERENCES businesses(id),
@@ -21,13 +31,3 @@ CREATE TABLE user_roles (
   user_id integer NOT NULL REFERENCES users(id),
   role_id integer NOT NULL REFERENCES roles(id)
 );
-
-CREATE TABLE roles (
-  id serial PRIMARY KEY,
-  name varchar(255)
-);
-
-CREATE TABLE businesses (
-  id serial PRIMARY KEY
-  name varchar(255) NOT NULL
-  );
