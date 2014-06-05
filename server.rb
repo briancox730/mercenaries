@@ -1,7 +1,9 @@
 require 'sinatra'
 require_relative 'helpers'
+
 use Rack::Session::Cookie, :expire_after => 10, # in seconds
                            :secret => ENV['SECRET_TOKEN']
+
 
 helpers do
   def logged_in
@@ -59,6 +61,25 @@ end
 post '/signup' do
   @username = params["user"]
   @password = params["password"]
+  @role = 4
   sign_up(@username, @password)
+  redirect '/login'
+end
+
+get '/signup_business' do
+  @username = logged_in
+  if @username != false
+    redirect '/'
+  end
+  @title = "Sign Up"
+  erb :signup_bus
+end
+
+post '/signup_business' do
+  @username = params["user"]
+  @password = params["password"]
+  @role = 3
+  @business_name = params["business_name"]
+  sign_up(@username, @password, @role, @business_name)
   redirect '/login'
 end

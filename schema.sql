@@ -14,7 +14,7 @@ CREATE TABLE users (
   username varchar(255) NOT NULL,
   salt varchar(255) NOT NULL,
   digest varchar(255) NOT NULL,
-  role varchar(255) NOT NULL
+  user_role integer NOT NULL
 );
 
 CREATE TABLE entries (
