@@ -82,14 +82,22 @@ end
 def login(username, password)
   login_results = []
   db_connection do |conn|
-    query = "SELECT users.id, users.username, users.salt, users.digest
-             FROM users WHERE $1 = users.username LIMIT 1"
+    query = "SELECT users.id, users.username, users.salt, users.digest,
+                    roles.role_name, businesses.business_name
+              FROM users
+              JOIN businesses
+                ON users.business_id = businesses.id
+              JOIN user_roles
+                ON users.id = user_roles.user_id
+              JOIN roles
+                ON user_roles.role_id = roles.id
+             WHERE $1 = users.username LIMIT 1"
     login_results = conn.exec_params(query, [username])
   end
   if login_results.to_a.size != 0
     test_digest = Digest::SHA1.hexdigest(password + login_results[0]["salt"])
     if test_digest == login_results[0]["digest"]
-      return login_results[0]["id"]
+      return login_results
     end
   end
   false

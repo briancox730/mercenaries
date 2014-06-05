@@ -40,9 +40,11 @@ end
 post '/login' do
   @username = params["user"]
   @password = params["password"]
-  @userid = login(@username, @password)
+  @userinfo = login(@username, @password)
   if @userid != false
-    session[:user_id] = @userid
+    session[:user_id] = @userinfo[0]["id"]
+    session[:business_name] = @userinfo[0]["business_name"]
+    session[:user_role] = @userinfo[0]["role_name"]
     redirect '/'
   else
     erb :login
