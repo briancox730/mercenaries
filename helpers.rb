@@ -12,11 +12,25 @@ def db_connection
   end
 end
 
-def sign_up(username, password, role = nil, business_name = nil)
+def find_businesses
+  results = []
+  db_connection do |conn|
+    query = "SELECT * FROM businesses"
+    results = conn.exec(query)
+  end
+  results
+end
+
+def sign_up(username, password, role, business_name)
   salt = SecureRandom.hex(32)
   digest = Digest::SHA1.hexdigest(password + salt)
   business_id = nil
-  if !business_name.nil?
+  db_connection do |conn|
+    query = "SELECT businesses.id FROM businesses WHERE business_name = businesses.business_name"
+    business_id = conn.exec(query)[0]["id"]
+  end
+
+  if !business_name.nil? && role == 3
     if existing_busines?(business_name) == false
       db_connection do |conn|
         query = "INSERT INTO businesses (business_name) VALUES ($1) RETURNING id"
@@ -31,7 +45,6 @@ def sign_up(username, password, role = nil, business_name = nil)
       query = "INSERT INTO users (business_id, username, salt, digest, user_role)
                VALUES ($1, $2, $3, $4, $5) RETURNING id"
       user_id = conn.exec_params(query, [business_id, username, salt, digest, role])[0]["id"]
-      binding.pry
     end
     db_connection do |conn|
       query = "INSERT INTO user_roles (user_id, role_id) VALUES ($1, $2)"

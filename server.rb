@@ -43,6 +43,7 @@ post '/login' do
   @userinfo = login(@username, @password)
   if @userid != false
     session[:user_id] = @userinfo[0]["id"]
+    session[:username] = @userinfo[0]["username"]
     session[:business_name] = @userinfo[0]["business_name"]
     session[:user_role] = @userinfo[0]["role_name"]
     redirect '/'
@@ -57,6 +58,7 @@ get '/signup/?' do
     redirect '/'
   end
   @title = "Sign Up"
+  @businesses = find_businesses
   erb :signup
 end
 
@@ -64,7 +66,8 @@ post '/signup' do
   @username = params["user"]
   @password = params["password"]
   @role = 4
-  sign_up(@username, @password)
+  @business_name = params["business_name"]
+  sign_up(@username, @password, @role, @business_name)
   redirect '/login'
 end
 

@@ -4,6 +4,12 @@
   <form name="input" action="/signup" method="post">
     Username: <input type="text" name="user">
     Password: <input type="password" name="password">
+    Business Name:
+      <select name="business_name">
+        <% @businesses.each do |business| %>
+          <option value="<%= business["business_name"] %>"><%= business["business_name"] %></option>
+        <% end %>
+      </select>
     <input type="submit" value="Sign Up">
   </form>
 </div>
